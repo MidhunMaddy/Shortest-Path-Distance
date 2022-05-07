@@ -1,0 +1,90 @@
+#include<stdio.h>
+#define INF 999 //infinity value = 999
+void square(int t1,int t2,int u1,int u2,int v1,int v2,int m,int n,int a[m][n],int b[m][n],int co[2][m][n]);
+void min(int t1,int t2,int u1,int u2,int v1,int v2,int m,int n,int a[m][n],int b[m][n],int co[2][m][n]);
+//main funtion to get intial and final co-ordinates and matrix
+void main()
+{
+    int m,n;
+    printf("Enter dimension of matrix:");
+    scanf("%d %d",&m,&n);
+    int a[m][n],b[m][n],co[2][m][n];
+    int i,j;
+    for(i=0;i<m;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            scanf("%d",&a[i][j]);
+            b[i][j]=co[0][i][j]=co[1][i][j]=INF;
+        }
+    }
+    int x1,x2,y1,y2,t1,t2;
+    printf("Enter the initial co-ordinates:");
+    scanf("%d %d",&x2,&y2);
+    printf("Enter the finial co-ordinates:");
+    scanf("%d %d",&x1,&y1);
+    t1=x1,t2=y1;
+    square(t1,t2,x1,y1,x2,y2,m,n,a,b,co);
+}
+
+void square(int t1,int t2,int u1,int u2,int v1,int v2,int m,int n,int a[m][n],int b[m][n],int co[2][m][n])
+{
+    int z1=v1,z2=v2,temp1,temp2;
+    int i,j,k;
+    
+    if(v1==u1 && v2==u2)
+    {
+        printf("%d\n",b[u1][u2]);
+        while(z1!=t1 || z2!=t2)
+        {
+            printf("(%d,%d) ",z1,z2);
+            temp1=z1,temp2=z2;
+            z1=co[0][temp1][temp2],z2=co[1][temp1][temp2];
+        }printf("(%d,%d)",t1,t2);
+        return;
+    }
+    if(a[u1][u2-1]!=INF && u2!=0 && b[u1][u2-1]>=a[u1][u2]+a[u1][u2-1])
+    {
+        b[u1][u2-1]=a[u1][u2-1]+=a[u1][u2];
+        co[0][u1][u2-1]=u1,co[1][u1][u2-1]=u2;
+    }
+    if(a[u1][u2+1]!=INF && u2!=n-1 && b[u1][u2+1]>=a[u1][u2]+a[u1][u2+1])
+    {
+        b[u1][u2+1]=a[u1][u2+1]+=a[u1][u2];
+        co[0][u1][u2+1]=u1,co[1][u1][u2+1]=u2;
+    }
+    if(a[u1-1][u2]!=INF && u1!=0 && b[u1-1][u2]>=a[u1][u2]+a[u1-1][u2])
+    {
+        b[u1-1][u2]=a[u1-1][u2]+=a[u1][u2];
+        co[0][u1-1][u2]=u1,co[1][u1-1][u2]=u2;
+    }
+    if(a[u1+1][u2]!=INF && u1!=m-1 && b[u1+1][u2]>=a[u1][u2]+a[u1+1][u2])
+    {         
+        b[u1+1][u2]=a[u1+1][u2]+=a[u1][u2];
+        co[0][u1+1][u2]=u1,co[1][u1+1][u2]=u2;
+    }
+    a[u1][u2]=INF,b[u1][u2]=INF;
+    min(t1,t2,u1,u2,v1,v2,m,n,a,b,co);
+}
+void min(int t1,int t2,int u1,int u2,int v1,int v2,int m,int n,int a[m][n],int b[m][n],int co[2][m][n])
+{
+    int i,j,max=999;
+    int k1=INF,k2=INF;
+    for(i=0;i<m;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            if(b[i][j]<max)
+            {
+                max=b[i][j];
+                k1=i,k2=j;
+            }
+        }
+    }
+    if(k1==INF && k2==INF)
+    {
+        printf("NO PATH!!!");
+        return;
+    }
+    square(t1,t2,k1,k2,v1,v2,m,n,a,b,co);
+}
